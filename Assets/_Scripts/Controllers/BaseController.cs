@@ -4,36 +4,38 @@ using UnityEngine;
 
 public abstract class BaseController<S, C> : MonoBehaviour where S : BaseState<S, C>
 {
-    protected S State { get; set; }
+    protected S ActiveState { get; set; }
 
     public Dictionary<Type, S> States { get; protected set; }
 
     protected virtual void Update()
     {
-        if (State != null)
-            State.OnStateUpdate();
+        if (ActiveState != null)
+            ActiveState.OnStateUpdate();
     }
 
     protected virtual void FixedUpdate()
     {
-        if (State != null)
-            State.OnStateFixedUpdate();
+        if (ActiveState != null)
+            ActiveState.OnStateFixedUpdate();
     }
+
+    protected abstract void SetDefaultActiveState(S defaultState);
 
     public virtual void ChangeState(S newState, C newController, bool checkIfSameState = true)
     {
-        if (State != null)
-            if (State.GetType() == newState.GetType() && checkIfSameState)
+        if (ActiveState != null)
+            if (ActiveState.GetType() == newState.GetType() && checkIfSameState)
                 return;
 
         if (newState.Controller == null)
             newState.Controller = newController;
 
-        if (State != null)
-            State.OnStateExit();
+        if (ActiveState != null)
+            ActiveState.OnStateExit();
 
-        State = newState;
+        ActiveState = newState;
 
-        State.OnStateEnter();
+        ActiveState.OnStateEnter();
     }
 }

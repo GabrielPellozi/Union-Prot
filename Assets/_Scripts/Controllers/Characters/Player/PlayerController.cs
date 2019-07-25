@@ -80,9 +80,14 @@ public class PlayerController : CharacterController<PlayerStates, PlayerControll
             { typeof(PlayerAttack), new PlayerAttack() }
         };
 
-        ChangeState(States[typeof(PlayerLocomotion)], this);
+        SetDefaultActiveState(States[typeof(PlayerLocomotion)]);
 
         EventsManager.RegisterEvent("Change GameState", CheckGameState);
+    }
+
+    protected override void SetDefaultActiveState(CharacterStates<PlayerStates, PlayerController> defaultState)
+    {
+        ChangeState(defaultState, this);
     }
 
     private void OnDestroy()
